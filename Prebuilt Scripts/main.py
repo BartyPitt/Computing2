@@ -22,9 +22,11 @@ import timeit
 
 ########################################
 #Varible Bin!!!!
-width = 4
-height = 4
-dencity = 0.3
+
+
+width = 100
+height = 100
+dencity = 0.8
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
 orderlist = "?" # ok so now this may be usefull
@@ -63,7 +65,10 @@ for item in a:
 class point:
     def __init__(self,y,x):
         self.pos = (y,x) # rememeber grid is the other way round
-        self.close = [[i+y,j+x] for i in range(-1,2) for j in range (-1,2)][1::2]
+        self.close = []
+        for a in [[0,1],[1,0],[0,-1],[-1,0]]:
+            if 0 <= self.pos[0] + a[0] < height and 0 <= self.pos[1] + a[1] < width:
+                self.close.append((self.pos[0]+a[0],self.pos[1]+a[1]))
         self.state = 0 #0 is for needs to be filled  -1 is for nul and >0 is the shape id
         self.stateid = 0 #the placed order of the point
 
@@ -190,13 +195,13 @@ def doesitfit2(shapeid,pos):
     output = 0
     for square in shapepos(shapeid,pos):
         try:
-            if ogrid[square[0]][square[1]].state == -1 and 0 < square[0] < height and 0 < square[1] < width:
+            if ogrid[square[0]][square[1]].state == -1 and 0 <= square[0] < height and 0 <= square[1] < width:
                 output += int(ogrid[square[0]][square[1]].edge)
                 continue
             else:
                 break
         except IndexError:
-            break
+            continue
     else:
         return output
     return False #
@@ -208,9 +213,8 @@ def arroundTheShape(shapeid,pos):
     for node in aroundNodes:
         node.edgescore()
 
-def placeshape(shapeid,pos,stateid):
+def placeshape(shapeid,pos,stateid): #maybe some issue with this and findshape temp fix in placr
     global testParts
-    print ("number of that part " , testParts[shapeid])
     for square in shapepos(shapeid,pos):
         ogrid[square[0]][square[1]].state = shapeid
         ogrid[square[0]][square[1]].stateid = stateid
@@ -249,8 +253,8 @@ def debugGrid(end):
 
 def canitfit(shapeid,pos):
     shape = utils.generate_shape(shapeid)
-    print(shape)
-    print(shapeid)
+    #print(shape)
+    #print(shapeid)
     for sq in shape:
         output = [100,"a","a"]
         a = doesitfit2(shapeid,(pos[0]-sq[0],pos[1]-sq[1]))
@@ -268,14 +272,18 @@ def findshape(pos): # best in format (score , (pos) , shapeid)
             test = canitfit(shape,pos)
             if best[0] > test[0]:
                 best = test
-    if best[0] != 20:
+    if best[0] != 20 :
         global shapesPlaced
-        placeshape(best[2],best[1],shapesPlaced)
-        shapesPlaced += 1
-        print("fit shape at" ,pos)
+        if doesitfit(best[2],best[1]):
+            placeshape(best[2],best[1],shapesPlaced)
+            shapesPlaced += 1
+            #print(best)
+        else:
+            return False
+        #print("fit shape at" ,pos)
         return True
     else:
-        print("cant fit shape" , pos)
+        #print("cant fit shape" , pos)
         return False
 
 ######
@@ -312,10 +320,11 @@ elapsed = timeit.default_timer() - start_time
 print(elapsed)
 ############
 #proccess the gird xx
-debugGrid(lambda x: x.edge)
+#debugGrid(lambda x: x.edge)
 print("  ")
 beenPlaced = 0
 
+start_time = timeit.default_timer()
 while True:
     beenPlaced = 0
     for i in NumberCords:
@@ -328,13 +337,15 @@ while True:
             break
     else:
         break
+elapsed = timeit.default_timer() - start_time
+print("time for algoroythem = ",elapsed)
 
 
 
 
 
-debugGrid(lambda x: x.state )
-debugGrid(lambda x: x.edge)
+#debugGrid(lambda x: x.state )
+#debugGrid(lambda x: x.edge)
 print (NumberCords)
 #debugGrid(lambda x: x.edge2)
 
