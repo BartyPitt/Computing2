@@ -24,8 +24,8 @@ import timeit
 #Varible Bin!!!!
 
 
-width = 100
-height = 100
+width = 30
+height = 30
 dencity = 0.8
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
@@ -316,7 +316,7 @@ closeAndEdge()
 Edge2f()
 
 elapsed = timeit.default_timer() - start_time
-#debugGrid(lambda x: x.state)
+debugGrid(lambda x: x.state)
 print(elapsed)
 ############
 #proccess the gird xx
@@ -338,14 +338,20 @@ while True:
     else:
         break
 elapsed = timeit.default_timer() - start_time
+"""
+for i in NumberCords:
+    if i:
+        for pos in i:
+            findshape(pos)
+
+"""
+
 print("time for algoroythem = ",elapsed)
 
 
 
-
-
 #debugGrid(lambda x: x.state )
-#debugGrid(lambda x: x.edge)
+debugGrid(lambda x: x.edge)
 print (NumberCords)
 #debugGrid(lambda x: x.edge2)
 
