@@ -18,15 +18,16 @@
 from copy import deepcopy  # copy 'target' to avoid modifying it
 import utils  # it might be helpful to use 'utils.py'
 from operator import add
+from random import shuffle
 import timeit
 
 ########################################
 #Varible Bin!!!!
 
 
-width = 30
-height = 30
-dencity = 0.8
+width = 50
+height = 50
+dencity = 0.3
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
 orderlist = "?" # ok so now this may be usefull
@@ -103,8 +104,6 @@ class point:
             except AttributeError:
                 pass
 
-
-
     def edgescore2(self):
         self.edge2 = 0
         if target[self.pos[0]][self.pos[1]] == 1:
@@ -164,7 +163,7 @@ def Tetris(target, limit_tetris):
     # Write your own solution generaton codes here instead of above
     # ######################################################
 
-    return M
+    return M #not me left in to sometimes test other functions
 
 def shapepos(shapeid,pos): # takes the shape id and the starting possition and returns a list of the true cordinates
     output = []
@@ -204,14 +203,14 @@ def doesitfit2(shapeid,pos):
             continue
     else:
         return output
-    return False #
+    return False #returns a score based on how it simplifies the overall shape
 
 def arroundTheShape(shapeid,pos):
     aroundNodes = set()
     for sq in shapepos(shapeid,pos):
         aroundNodes.update(set(ogrid[sq[0]][sq[1]].node))
     for node in aroundNodes:
-        node.edgescore()
+        node.edgescore() # updates nodes when something is placed
 
 def placeshape(shapeid,pos,stateid): #maybe some issue with this and findshape temp fix in placr
     global testParts
@@ -221,7 +220,7 @@ def placeshape(shapeid,pos,stateid): #maybe some issue with this and findshape t
     arroundTheShape(shapeid,pos)
     testParts[shapeid] -= 1
 
-def groupsize(livenode):
+def groupsize(livenode):#dead function but may be usefull in the future # Unused at the moment
     alive = []
     blive = []
     general = set()
@@ -234,9 +233,9 @@ def groupsize(livenode):
             for sqq in sq.node:
                 if sq.state == 0:
                     blive.append(sq)
-        general.union(set(alive)) #dead function but may be usefull in the future # Unused at the moment
+        general.union(set(alive))
 
-def debugGrid(end):
+def debugGrid(end): #this is a debug function. It takes a lower order lambda function then prints out a colour coded grid.
     for row in ogrid:
         line = ""
         for point in row:
@@ -320,7 +319,7 @@ debugGrid(lambda x: x.state)
 print(elapsed)
 ############
 #proccess the gird xx
-#debugGrid(lambda x: x.edge)
+debugGrid(lambda x: x.edge)
 print("  ")
 beenPlaced = 0
 
