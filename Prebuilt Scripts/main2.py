@@ -25,9 +25,9 @@ import timeit
 #Varible Bin!!!!
 
 
-width = 10
-height = 10
-dencity = 0.8
+width = 5
+height = 5
+dencity = 0.3
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
 orderlist = "?" # ok so now this may be usefull
@@ -206,9 +206,10 @@ def nextLevel(node,pos):
     if realcordsTest(pos,temp[-1]) == True:
         if len(temp) > 3:
             if  isinstance(node.id,int):
+                print("here",node.id)
                 if testParts[node.id] > 0:
-                    #print("here")
                     n = doesitfit2(node.id,pos)
+                    print("DoesItFit2",n)
                     if n != False:
                         truecords = []
                         for cord in node.cords:
@@ -394,18 +395,27 @@ print("  ")
 beenPlaced = 0
 
 start_time = timeit.default_timer()
-placed = 0
+placed = 1
 for i in NumberCords:
     if i:
         for pos in i:
             best = nextLevel(nodeTree,pos)
             #print (best)
             if best[0] != -1:
-                print("place item")
+                #print("place item")
                 placeshape2(best[2],best[1],placed)
                 placed += 1
 
-
+closeAndEdge()
+print("second passs" , testParts)
+for i in NumberCords:
+    if i:
+        for pos in i:
+            best = nextLevel(nodeTree,pos)
+            if best[0] != -1:
+                print("place item")
+                placeshape2(best[2],best[1],placed)
+                placed += 1
 
 elapsed = timeit.default_timer() - start_time
 """
@@ -420,7 +430,9 @@ print("time for algoroythem = ",elapsed)
 
 
 
-debugGrid(lambda x: x.stateid )
+#debugGrid(lambda x: x.state )
+print(" ")
+#debugGrid(lambda x: x.stateid )
 #debugGrid(lambda x: x.edge)
 print (NumberCords)
 #debugGrid(lambda x: x.edge2)
@@ -439,14 +451,13 @@ for y,row in enumerate(ogrid):
             solution[y].append((sq.state,sq.stateid))
 
 
-utils.visualisation(target,solution)
+#utils.visualisation(target,solution)
 valid, missing, excess, error_pieces, use_diff = utils.check_solution(target, solution ,a)
-print (valid)
 total_blocks = sum([sum(row) for row in target])
 percent = (missing + excess)/ total_blocks
 print (1 - percent)
 print (a)
 
-#utils.visualisation(target,solution)
+utils.visualisation(target,solution)
 #debug print
 #print(pieces, target)
