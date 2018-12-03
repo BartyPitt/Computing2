@@ -24,14 +24,13 @@ import timeit
 ########################################
 #Varible Bin!!!!
 
-
-width = 5
-height = 5
-dencity = 0.3
+width = 20
+height = 20
+dencity = 0.8
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
 orderlist = "?" # ok so now this may be usefull
-
+print("Running")
 ######################
 #Running varibles
 global shapesPlaced
@@ -130,11 +129,12 @@ class TreePoint():
                 for cord in self.cords:
                     tempcords = []
                     for k in self.cords:
-                        temp = [cord[0] - k[0],cord[1] - k[1]]
+                        temp = [-cord[0] + k[0],-cord[1] + k[1]]
                         if temp not in utils.generate_shape(i):
                             break
                     else:
                         self.id = i
+                        #print ("self.cords followed by true values",self.cords , utils.generate_shape(i))
 
 def Tetris(target, limit_tetris):
 
@@ -206,27 +206,27 @@ def nextLevel(node,pos):
     if realcordsTest(pos,temp[-1]) == True:
         if len(temp) > 3:
             if  isinstance(node.id,int):
-                print("here",node.id)
+                #print("here",node.id,node.cords)
                 if testParts[node.id] > 0:
-                    n = doesitfit2(node.id,pos)
-                    print("DoesItFit2",n)
+                    n = doesitfit3(temp,pos)
+                    #print("DoesItFit2",n)
                     if n != False:
                         truecords = []
                         for cord in node.cords:
                             truecords.append([pos[0]+cord[0],pos[1]+cord[1]])
                         return [n,truecords,node.id]
 
-            return([-1])
+            return([20])
         else:
-            best = [-1,"nope"]
+            best = [20,"nope"]
             for newnode in node.child:
                 compare = nextLevel(newnode,pos)
                 #print (compare,newnode.cords)
-                if compare[0] > best[0]:
+                if compare[0] < best[0]:
                     best = compare
             return best
     else:
-        return([-1])
+        return([20])
 
 def shapepos(shapeid,pos): # takes the shape id and the starting possition and returns a list of the true cordinates
     output = []
@@ -268,9 +268,25 @@ def doesitfit2(shapeid,pos):
         return output
     return False #returns a score based on how it simplifies the overall shape
 
-def arroundTheShape(shapeid,pos):
+def doesitfit3(cords,pos):
+    output = 0
+    for square in cords:
+        try:
+            #print ("does it fit cords",square[0]+pos[0],square[1]+pos[1])
+            if ogrid[square[0]+pos[0]][square[1]+pos[1]].state == -1 and 0 <= square[0] + pos[0] < height and 0 <= square[1]+ pos[1] < width:
+                output += int(ogrid[square[0]+pos[0]][square[1]+pos[1]].edge)
+                continue
+            else:
+                break
+        except IndexError:
+            continue
+    else:
+        return output
+    return False #returns a score based on how it simplifies the overall shape
+
+def arroundTheShape(cords):
     aroundNodes = set()
-    for sq in shapepos(shapeid,pos):
+    for sq in cords:
         aroundNodes.update(set(ogrid[sq[0]][sq[1]].node))
     for node in aroundNodes:
         node.edgescore() # updates nodes when something is placed
@@ -284,13 +300,14 @@ def placeshape(shapeid,pos,stateid): #maybe some issue with this and findshape t
     testParts[shapeid] -= 1
 
 def placeshape2(shapeid,cords,stateid):
-    print(shapeid)
     global testParts
     for square in cords:
         ogrid[square[0]][square[1]].state = shapeid
         ogrid[square[0]][square[1]].stateid = stateid
-    #arroundTheShape(shapeid,pos)
+    arroundTheShape(cords)
     testParts[shapeid] -= 1
+
+
 
 
 def groupsize(livenode):#dead function but may be usefull in the future # Unused at the moment
@@ -336,28 +353,6 @@ def canitfit(shapeid,pos):
             output = (a,(pos[0]-sq[0],pos[1]-sq[1]),shapeid)
     return output
 
-def findshape(pos): # best in format (score , (pos) , shapeid)
-    best = (20,False)
-    global testParts
-    for shape in testParts:
-        if testParts[shape] > 0:
-            test = canitfit(shape,pos)
-            if best[0] > test[0]:
-                best = test
-    if best[0] != 20 :
-        global shapesPlaced
-        if doesitfit(best[2],best[1]):
-            placeshape(best[2],best[1],shapesPlaced)
-            shapesPlaced += 1
-            #print(best)
-        else:
-            return False
-        #print("fit shape at" ,pos)
-        return True
-    else:
-        #print("cant fit shape" , pos)
-        return False
-
 ######
 #create the grid to put stuff in
 ogrid = [[point(y,x) for x in range(width)]for y in range(height)]
@@ -387,11 +382,11 @@ nodeTree.genkids()
 
 elapsed = timeit.default_timer() - start_time
 #debugGrid(lambda x: x.state)
-print(elapsed)
+#print(elapsed)
 ############
 #proccess the gird xx
 #debugGrid(lambda x: x.edge)
-print("  ")
+#print("  ")
 beenPlaced = 0
 
 start_time = timeit.default_timer()
@@ -400,22 +395,14 @@ for i in NumberCords:
     if i:
         for pos in i:
             best = nextLevel(nodeTree,pos)
-            #print (best)
-            if best[0] != -1:
-                #print("place item")
+            if best[0] != 20 and best[1] != "nope":
+                #print(best)
                 placeshape2(best[2],best[1],placed)
                 placed += 1
 
 closeAndEdge()
-print("second passs" , testParts)
-for i in NumberCords:
-    if i:
-        for pos in i:
-            best = nextLevel(nodeTree,pos)
-            if best[0] != -1:
-                print("place item")
-                placeshape2(best[2],best[1],placed)
-                placed += 1
+#print("second passs" , testParts)
+
 
 elapsed = timeit.default_timer() - start_time
 """
@@ -434,7 +421,7 @@ print("time for algoroythem = ",elapsed)
 print(" ")
 #debugGrid(lambda x: x.stateid )
 #debugGrid(lambda x: x.edge)
-print (NumberCords)
+#print (NumberCords)
 #debugGrid(lambda x: x.edge2)
 
 ############################
@@ -451,13 +438,13 @@ for y,row in enumerate(ogrid):
             solution[y].append((sq.state,sq.stateid))
 
 
-#utils.visualisation(target,solution)
+utils.visualisation(target,solution)
 valid, missing, excess, error_pieces, use_diff = utils.check_solution(target, solution ,a)
 total_blocks = sum([sum(row) for row in target])
 percent = (missing + excess)/ total_blocks
 print (1 - percent)
 print (a)
 
-utils.visualisation(target,solution)
+#utils.visualisation(target,solution)
 #debug print
 #print(pieces, target)
