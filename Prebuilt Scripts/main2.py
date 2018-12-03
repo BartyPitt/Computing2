@@ -24,10 +24,11 @@ import timeit
 ########################################
 #Varible Bin!!!!
 
-width = 20
-height = 20
+width = 200
+height = 400
 dencity = 0.8
 global target , testParts , TheSolution
+global buffer
 target,a,TheSolution = utils.generate_target(width, height, dencity)
 orderlist = "?" # ok so now this may be usefull
 print("Running")
@@ -96,12 +97,11 @@ class point:
                         self.edge += 1
                 except IndexError:
                     pass
+        NumberCords[self.edge].append(self.pos)
+        global buffer
+        #if self.edge == 1:
+        #    buffer = self
 
-            try:
-                NumberCords[self.edge].append(self.pos)
-                return self.old - self.edge
-            except AttributeError:
-                pass
 
 class TreePoint():
     def __init__(self,cords):
@@ -391,6 +391,7 @@ beenPlaced = 0
 
 start_time = timeit.default_timer()
 placed = 1
+
 for i in NumberCords:
     if i:
         for pos in i:
@@ -400,18 +401,30 @@ for i in NumberCords:
                 placeshape2(best[2],best[1],placed)
                 placed += 1
 
-closeAndEdge()
-#print("second passs" , testParts)
-
-
-elapsed = timeit.default_timer() - start_time
 """
 for i in NumberCords:
     if i:
         for pos in i:
-            findshape(pos)
-
+            best = nextLevel(nodeTree,pos)
+            if best[0] != 20 and best[1] != "nope":
+                #print(buffer)
+                placeshape2(best[2],best[1],placed)
+                placed += 1
+                while buffer.state == 0:
+                    best = nextLevel(nodeTree,buffer.pos)
+                    if best[0] != 20 and best[1] != "nope":
+                        #print(best)
+                        placeshape2(best[2],best[1],placed)
+                        placed += 1
+                    else:
+                        break
 """
+
+
+#print("second passs" , testParts)
+
+
+elapsed = timeit.default_timer() - start_time
 
 print("time for algoroythem = ",elapsed)
 
@@ -438,7 +451,7 @@ for y,row in enumerate(ogrid):
             solution[y].append((sq.state,sq.stateid))
 
 
-utils.visualisation(target,solution)
+#utils.visualisation(target,solution)
 valid, missing, excess, error_pieces, use_diff = utils.check_solution(target, solution ,a)
 total_blocks = sum([sum(row) for row in target])
 percent = (missing + excess)/ total_blocks
