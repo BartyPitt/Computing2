@@ -24,8 +24,8 @@ import timeit
 ########################################
 #Varible Bin!!!!
 
-width = 20
-height = 20
+width = 10
+height = 10
 dencity = 0.8
 global target , testParts , TheSolution
 target,a,TheSolution = utils.generate_target(width, height, dencity)
@@ -85,7 +85,7 @@ class point:
             if self.edge == 0:
                 return
             self.old = self.edge
-            NumberCords[self.edge].remove(self.pos) #may slow it down
+            #NumberCords[self.edge].remove(self.pos) #may slow it down
         except AttributeError:
             self.edge = 0
         if target[self.pos[0]][self.pos[1]] == 1:
@@ -410,7 +410,6 @@ for i in NumberCords:
     if i:
         for pos in i:
             findshape(pos)
-
 """
 
 print("time for algoroythem = ",elapsed)

@@ -20,7 +20,7 @@ target = [
             [0, 1, 1, 1, 0],
             [1, 1, 1, 1, 1]
          ]
-         
+
 limit_tetris = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 0, 10: 0, 11: 0, 12: 0, 13: 1, 14: 0, 15: 0, 16: 0, 17: 0, 18: 1, 19: 0}
 
 perfect_solution = [
@@ -53,7 +53,7 @@ else:  # if the solution is valid, test time performance and accuracy
     # There will be three different 'target' with increasing complexity in real test.
 
     time_set = timeit.timeit('Tetris({},{})'.format(target,limit_tetris), 'from main import Tetris', number=1)
-    
+
     if time_set > 600:
 
         print("WARNING: Time is over 10 minutes! The solution is not valid")
