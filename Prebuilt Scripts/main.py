@@ -236,9 +236,9 @@ def Tetris(target, limit_tetris):
         testParts[item] = limit_tetris[item]
 
     #print("main work point")
+    start_time = timeit.default_timer()
     global ogrid
     ogrid = [[point(y,x) for x in range(width)]for y in range(height)]
-    start_time = timeit.default_timer()
     nodeTree = TreePoint([(0,0)])
     setstate(target)
     closeAndEdge(target)
@@ -264,7 +264,7 @@ def Tetris(target, limit_tetris):
 
     elapsed = timeit.default_timer() - start_time
 
-    #print("time for algoroythem = ",elapsed)
+    print("time for algoroythem = ",elapsed)
 
 
 
@@ -290,15 +290,15 @@ def Tetris(target, limit_tetris):
 
 
     #utils.visualisation(target,solution)
-"""
-width = 1000
-height = 1000
+
+width = 20
+height = 25
 dencity = 0.8
 target,a,TheSolution = utils.generate_target(width, height, dencity)
+
 solution2 = Tetris(target,a)
 valid, missing, excess, error_pieces, use_diff = utils.check_solution(target, solution2 ,a)
 total_blocks = sum([sum(row) for row in target])
 percent = (missing + excess)/ total_blocks
 print (1 - percent)
 print (a)
-"""
